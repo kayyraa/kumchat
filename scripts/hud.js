@@ -1,0 +1,248 @@
+const User = localStorage.getItem("User") ? JSON.parse(localStorage.getItem("User")) : [];
+
+NewChatButton.addEventListener("click", async () => {
+    const PromptDiv = new Prompt({ Title: "New DM", Nodes: [] }, [".Content", {
+        width: "100%",
+        alignItems: "center"
+    }]).Append();
+    PromptDiv.querySelector(".Content").innerHTML = `
+        <span style="width: calc(100% - 1em);">Users</span>
+        <input class="UserInput" style="width: calc(100% - 2em); margin-right: 1em;" type="text" placeholder="Users, format: x, x, x">
+        <span style="width: calc(100% - 1em);">Icon (optional)</span>
+        <input class="IconInput" style="width: calc(100% - 1em);" type="file" accept="image/*">
+        <button class="CreateButton" style="width: calc(100% - 2em); margin-right: 1em;">Create</button>
+    `;
+
+    let Icon;
+    PromptDiv.querySelector(".Content").querySelector(".IconInput").addEventListener("change", async () => {
+        const UploadedFile = PromptDiv.querySelector(".Content").querySelector(".IconInput").files[0];
+        if (!UploadedFile) return;
+        
+        const Path = `kumchat/${Uuid(8)}.${UploadedFile.name.split(".")[1]}`;
+        await new GithubStorage(UploadedFile).Upload(Path);
+        Icon = `https://github.com/kayyraa/DirectStorage/blob/main/${Path}?raw=true`;
+    });
+
+    PromptDiv.querySelector(".Content").querySelector(".CreateButton").addEventListener("click", async () => {
+        const Users = PromptDiv.querySelector(".Content").querySelector(".UserInput").value.split(",").map((String) => String.trim());
+        if (Users.length === 0) return;
+
+        const Document = {
+            Users: Users,
+            Icon: Icon || `../images/Group${Math.floor(Math.random() * 3)}.svg`,
+            Messages: []
+        };
+
+        await new FireStorage("DMs").AppendDocument(Document);
+        location.reload();
+    });
+});
+
+const SwitchFrame = (TargetFrame) => {
+    Frames.forEach((Frame, Index) => {
+        Frame.style.left = Index === 0 ? "-125%" : "125%";
+        Frame.style.pointerEvents = "none";
+        if (Frame.getAttribute("href") !== TargetFrame) return;
+        Frame.style.left = "0%";
+        Frame.style.pointerEvents = "auto";
+    });
+};
+
+SwitchFrame("Chats");
+
+let SelectedChats = [];
+let Selecting = false;
+MoreButton.addEventListener("click", (Event) => {
+    Dropdown.innerHTML = `
+        <div style="background-color: ${Selecting ? "rgba(255, 255, 255, 0.125)" : ""};" class="SelectChatsButton">
+            <span>Select chats</span>
+            <img src="../images/CheckStroke.svg">
+        </div>
+        <div class="DeleteSelectedButton">
+            <span>Delete selected</span>
+            <img src="../images/Trash.svg">
+        </div>
+    `;
+
+    Dropdown.style.left = `${Event.clientX + Dropdown.clientWidth / 2}px`;
+    Dropdown.style.top = `${Event.clientY + Dropdown.clientHeight - 32}px`;
+    Dropdown.style.opacity = "1";
+    Dropdown.style.pointerEvents = "auto";
+
+    requestAnimationFrame(() => {
+        const SelectChatsButton = Dropdown.querySelector(".SelectChatsButton");
+        const DeleteSelectedButton = Dropdown.querySelector(".DeleteSelectedButton");
+
+        SelectChatsButton.addEventListener("click", () => {
+            Selecting = !Selecting;
+            SelectedChats = [];
+
+            Array.from(Chatlist.children).forEach(ChatNode => {
+                const ChatId = ChatNode.getAttribute("id");
+
+                ChatNode.setAttribute("selected", "false");
+                ChatNode.addEventListener("click", () => {
+                    const IsSelected = ChatNode.getAttribute("selected") === "true";
+                    ChatNode.setAttribute("selected", IsSelected ? "false" : "true");
+                    ChatNode.style.backgroundColor = IsSelected ? "" : "rgba(120, 120, 255, 0.25)";
+
+                    if (!IsSelected) SelectedChats.push(ChatId);
+                    else SelectedChats = SelectedChats.filter((String) => String !== ChatId);
+                });
+            });
+
+            Dropdown.style.opacity = "0";
+            Dropdown.style.pointerEvents = "none";
+        });
+
+        DeleteSelectedButton.addEventListener("click", async () => {
+            if (SelectedChats.length === 0) return;
+            for (const Chat of SelectedChats) {
+                const ChatDocument = await new FireStorage("DMs").GetDocument(Chat);
+                const Members = ChatDocument.Users || [];
+                const UpdatedMembers = Members.filter((Member) => Member !== User.Username);
+                await new FireStorage("DMs").UpdateDocument(Chat, { Users: UpdatedMembers });
+            }
+            location.reload();
+        });
+    });
+});
+
+document.addEventListener("mousedown", (Event) => {
+    if (Event.target === MoreButton || Event.target === Dropdown || Event.target.offsetParent === Dropdown) return;
+    Dropdown.style.opacity = "0";
+    Dropdown.style.pointerEvents = "none";
+});
+
+UploadMediaButton.addEventListener("click", () => {
+    const PromptDiv = new Prompt({ Title: "Upload Media", Nodes: [] }, [".Content", {
+        width: "100%",
+        alignItems: "center"
+    }]).Append();
+    PromptDiv.querySelector(".Content").innerHTML = `
+        <span style="width: calc(100% - 1em);">File input</span>
+        <input class="FileInput" style="width: calc(100% - 1em);" type="file" accept="image/*">
+        <button class="UploadButton" style="width: calc(100% - 2em); margin-right: 1em;">Upload</button>
+    `;
+
+    let File;
+    PromptDiv.querySelector(".Content").querySelector(".FileInput").addEventListener("change", async () => {
+        File = PromptDiv.querySelector(".Content").querySelector(".FileInput").files[0];
+    });
+
+    PromptDiv.querySelector(".Content").querySelector(".UploadButton").addEventListener("click", async () => {
+        if (!File) return;
+
+        const Path = `kumchat/${Uuid(8)}.${File.name.split(".")[1]}`;
+        await new GithubStorage(File).Upload(Path);
+        await CopyToClipboard(String(`https://github.com/kayyraa/DirectStorage/blob/main/${Path}?raw=true`));
+
+        PromptDiv.querySelector(".Content").innerHTML += "<span>File uploaded successfully, copied to clipboard.</span>";
+    });
+});
+
+const FetchDMs = async () => {
+    if (!User) return;
+
+    await new FireStorage("DMs").GetDocuments().then((Documents) => {
+        Documents.forEach((Document) => {
+            const Users = Document.Users;
+            if (!Users.includes(User.Username)) return;
+            const IsGroup = Document.Users.length > 2;
+
+            const Node = document.createElement("div");
+            Node.innerHTML = `
+                <img src="${Document.Icon}">
+                <div>
+                    <span>${IsGroup ? String(Users.filter((String) => String !== User.Username)).replaceAll(",", ", ") : Users.filter((String) => String !== User.Username)}</span>
+                    <span>${Document.Messages.length > 0 ? new Format(Document.Messages[Document.Messages.length - 1].Timestamp).ConvertEpochToReadable("hh:mm") : ""}</span>
+                    <span>${Document.Messages.length > 0 ? TruncateString(`${Document.Messages[Document.Messages.length - 1].Author === User.Username ? "You" : Document.Messages[Document.Messages.length - 1].Author}: ${Document.Messages[Document.Messages.length - 1].Content}`, 24, "...") : ""}</span>
+                </div>
+            `;
+            Node.setAttribute("id", Document.id);
+            Node.style.order = `-${Document.Messages.length > 0 ? Document.Messages[Document.Messages.length - 1].Timestamp : ""}`;
+            Chatlist.appendChild(Node);
+
+            Node.addEventListener("click", () => {
+                if (Selecting) return;
+                SwitchFrame("Chat");
+
+                Chat.querySelector(".Topbar").querySelector(".DMIcon").src = Document.Icon;
+                Chat.querySelector(".Topbar").querySelector(".DMName").innerHTML = IsGroup ? String(Users.filter((String) => String !== User.Username)).replaceAll(",", ", ") : Users.filter((String) => String !== User.Username);
+                
+                Chat.querySelector(".Topbar").querySelector(".BackButton").addEventListener("click", () => SwitchFrame("Chats"));
+
+                function UpdateMessages() {
+                    Chat.querySelector(".Messages").innerHTML = "";
+                    Document.Messages.forEach(async Message => {
+                        const AuthorDocuments = await new FireStorage("Users").GetDocumentsByField("Username", Message.Author);
+                        const AuthorDocument = AuthorDocuments[0];
+
+                        const Node = document.createElement("div");
+                        Node.innerHTML = `
+                            <span>${Message.Content}</span>
+                            <img src="${AuthorDocument.ProfileImage}">
+                        `;
+                        if (Message.Author === User.Username) Node.setAttribute("client", "");
+                        Chat.querySelector(".Messages").appendChild(Node);
+
+                        if (Message.Author === User.Username) {
+                            Dropdown.innerHTML = `<div class="DeleteButton">Delete</div>`;
+                            Node.ClickAndHold((Event) => {
+                                Dropdown.style.opacity = "1";
+                                Dropdown.style.pointerEvents = "auto";
+                                Dropdown.style.left = `${Event.clientX - Dropdown.clientWidth / 2}px`;
+                                Dropdown.style.top = `${Event.clientY + Dropdown.clientHeight}px`;
+                            }, 750);
+
+                            Dropdown.querySelector(".DeleteButton").addEventListener("click", async () => {
+                                const MessageIndex = Document.Messages.findIndex(MessageItem => 
+                                    MessageItem.Author === Message.Author && 
+                                    MessageItem.Content === Message.Content && 
+                                    MessageItem.Timestamp === Message.Timestamp
+                                );
+                            
+                                if (MessageIndex === -1) return;
+                                const NewMessages = [...Document.Messages];
+                                NewMessages.splice(MessageIndex, 1);
+                            
+                                await new FireStorage("DMs").UpdateDocument(Document.id, { Messages: NewMessages });
+                                UpdateMessages();
+                            
+                                Dropdown.style.opacity = "0";
+                                Dropdown.style.pointerEvents = "none";
+                            });                            
+                        }
+                    });
+                }
+
+                async function SendMessage() {
+                    const Message = Chat.querySelector(".Input").querySelector("input").value;
+                    if (!Message) return;
+
+                    const NewMessage = {
+                        Author: User.Username,
+                        Content: Message,
+                        Timestamp: Math.floor(Date.now() / 1000),
+                    };
+
+                    const NewMessages = Document.Messages;
+                    NewMessages.push(NewMessage);
+                    await new FireStorage("DMs").UpdateDocument(Document.id, { Messages: NewMessages });
+                    requestAnimationFrame(UpdateMessages);
+
+                    Chat.querySelector(".Input").querySelector("input").value = "";
+                }
+
+                Chat.querySelector(".Input").querySelector(".SendButton").addEventListener("click", async () => SendMessage);
+                Chat.querySelector(".Input").querySelector("input").addEventListener("keydown", (Event) => {
+                    if (Event.key === "Enter") SendMessage();
+                });
+
+                UpdateMessages();
+            });
+        });
+    });
+};
+
+document.addEventListener("DOMContentLoaded", FetchDMs);
