@@ -1,0 +1,829 @@
+.Action {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+
+    position: absolute;
+    left: 0;
+    top: 85%;
+
+    width: 100%;
+    height: 2em;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+.Action > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+
+    margin-left: 8px;
+
+    background-color: color-mix(in srgb, rgba(255, 255, 255, 0.0625), rgba(255, 255, 255, 0.125));
+    width: fit-content;
+
+    padding: 4px 1em;
+    border-radius: 8px;
+
+    transition: all 0.25s ease;
+}
+
+.Action > .Record {
+    background-color: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+.Action > .Record > img[class*="Button"] {
+    height: 24px;
+
+    background-color: rgba(255, 255, 255, 0.0625);
+    padding: 2px;
+
+    border-radius: 6px;
+    cursor: pointer;
+
+    pointer-events: auto;
+    transition: background-color 0.25s ease;
+}
+
+.Action > .Record > img[class*="Button"]:hover {
+    background-color: rgba(255, 255, 255, 0.125);
+}
+
+.Action > .Record > .Dot {
+    position: relative;
+    align-self: center;
+    height: 8px;
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+
+    animation: RecordAnimation 2s infinite;
+}
+
+@keyframes RecordAnimation {
+    0% {
+        background-color: rgba(255, 60, 60, 0.25);
+        box-shadow: 0 0 16px 2px rgba(255, 60, 60, 0.25);
+    }
+    50% {
+        background-color: rgba(255, 60, 60, 1);
+        box-shadow: 0 0 16px 2px rgba(255, 60, 60, 1);
+    }
+    100% {
+        background-color: rgba(255, 60, 60, 0.25);
+        box-shadow: 0 0 16px 2px rgba(255, 60, 60, 0.25);
+    }
+}
+
+.NotificationContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 50%;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+    z-index: 2;
+}
+
+.NotificationContainer > div {
+    margin-top: 8px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: rgb(60, 120, 200);
+    border-radius: 8px;
+
+    padding: 4px 1em;
+
+    min-width: 18em;
+    min-height: 24px;
+
+    transition: all 0.25s ease;
+}
+
+.NotificationContainer > div > img {
+    height: 24px;
+}
+
+.Prompt {
+    transform: translate(-50%, -50%);
+
+    min-width: 50%;
+    max-width: 100%;
+
+    min-height: 50%;
+    max-height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+}
+
+.Prompt > .Topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-left: 8px;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 2em;
+
+    background-color: transparent;
+    backdrop-filter: initial;
+
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+
+    user-select: none;
+
+    z-index: 2;
+}
+
+.Prompt > .Topbar > div[button] {
+    padding: 0;
+    margin: 0;
+    aspect-ratio: 1 / 1;
+
+    text-align: center;
+    align-content: center;
+
+    background-color: rgba(0, 0, 0, 0.25);
+    height: 100%;
+
+    cursor: pointer;
+}
+
+.Prompt > .Content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    position: absolute;
+    left: 0;
+    top: 2em;
+    height: calc(100% - 2em);
+
+    margin: 8px;
+}
+
+.Prompt > .Content textarea,
+.Prompt > .Content input[type="text"] {
+    outline: none;
+    background-color: transparent !important;
+    color: rgb(255, 255, 255);
+
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.Prompt > .Content button {
+    outline: none;
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    cursor: pointer;
+}
+
+.Prompt > .Content button,
+.Prompt > .Content textarea,
+.Prompt > .Content input[type="text"] {
+    padding: 0 8px 0 8px;
+    min-height: 2em;
+    max-height: 2em;
+}
+
+.Prompt > .Content button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.Prompt > .Content header {
+    font-size: 2em;
+}
+
+.Frames {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+}
+
+.Frames > div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    transition: all 0.25s ease, left 0.5s ease;
+}
+
+.Frames > div > header {
+    font-size: 3em;
+    font-weight: 600;
+}
+
+.Chats {
+    margin: 8px;
+    width: calc(100% - 1em) !important;
+}
+
+.Chats > .Topbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-left: 8px;
+
+    top: 0;
+    left: 0;
+    width: calc(100% - 8px);
+    height: 2em;
+}
+
+.Chats > .Topbar > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+
+    height: 2em;
+}
+
+.Chats > .Topbar > div > img {
+    height: 75%;
+    cursor: pointer;
+    padding: 4px;
+
+    background-color: rgba(255, 255, 255, 0.0625);
+    border-radius: 100%;
+
+    transition: background-color 0.25s ease;
+}
+
+.Chats > .Topbar > div > img:hover {
+    background-color: rgba(255, 255, 255, 0.125);
+}
+
+.Chats > .Sort {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    position: relative;
+    height: 2em;
+    width: 100%;
+}
+
+.Chats > .Sort > div {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+}
+
+.Chats > .Sort > div > button,
+.Chats > .Sort > div > input {
+    width: 100%;
+    height: 100%;
+
+    color: rgb(255, 255, 255);
+    
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.0625);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.Chats > .Sort > div > input {
+    padding-left: 8px;
+    outline: none;
+    cursor: text;
+}
+
+.Chats > .Sort > div > button:hover,
+.Chats > .Sort > div > button[active] {
+    background-color: rgba(255, 255, 255, 0.125);
+}
+
+.Chats > .Search {
+    position: relative;
+    height: 2em;
+    width: calc(100% - 2em - 4px);
+}
+
+.Chats > .Search > img {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    margin-left: 4px;
+    z-index: 1;
+    filter: contrast(0.5);
+}
+
+.Chats > .Search > input {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 100%;
+    height: 2em;
+
+    padding-left: 32px;
+
+    background-color: rgb(50, 50, 50);
+    color: rgb(255, 255, 255);
+
+    border: none;
+    outline: 2px solid transparent;
+
+    border-radius: 8px;
+
+    transition: outline 0.25s ease;
+}
+
+.Chats > .Search > input:focus {
+    outline-color: rgba(170, 170, 170, 0.5);
+}
+
+.Chats > .Chatlist {
+    display: flex;
+    flex-direction: column;
+}
+
+.Chats > .Chatlist > div {
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+    
+    padding-left: 8px;
+    padding-right: 8px;
+
+    right: 8px;
+
+    min-height: 4em;
+    max-height: 4em;
+
+    width: 100%;
+
+    border-bottom: 2px solid rgba(60, 60, 60, 0.75);
+
+    background-color: transparent;
+    cursor: pointer;
+
+    transition: background-color 0.25s ease;
+}
+
+.Chats > .Chatlist > div:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.Chats > .Chatlist > div > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.Chats > .Chatlist > div > div > span {
+    font-size: 24px;
+}
+
+.Chats > .Chatlist > div > div > span:nth-child(2) {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    font-size: 16px;
+}
+
+.Chats > .Chatlist > div > div > span:nth-child(3) {
+    opacity: 0.5;
+    font-size: 16px;
+}
+
+.Chats > .Chatlist > div > img {
+    height: 3em;
+    border-radius: 100%;
+    aspect-ratio: 1 / 1;
+
+    box-shadow: 0 0 16px 8px rgba(0, 0, 0, 0.25);
+    background-color: rgba(255, 255, 255, 0.125);
+}
+
+.Chat > .Topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 4em;
+
+    padding-left: 1em;
+
+    background-color: rgba(255, 255, 255, 0.0625);
+}
+
+.Chat > .Topbar > img {
+    background-color: rgba(255, 255, 255, 0.0625);
+    width: 24px;
+    padding: 8px;
+    border-radius: 100%;
+    cursor: pointer;
+
+    transition: background-color 0.25s ease;
+}
+
+.Chat > .Topbar > img:hover {
+    background-color: rgba(255, 255, 255, 0.125);
+}
+
+.Chat > .Topbar > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.Chat > .Topbar > div > img {
+    height: 3em;
+    border-radius: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.Chat > .Topbar > div > span {
+    font-size: 24px;
+}
+
+.Chat > .Messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    padding: 8px;
+
+    position: absolute;
+    left: 0;
+    top: 4em;
+    width: 100%;
+    height: calc(100% - 8em);
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.Chat > .Messages > div {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    position: relative;
+    background-color: rgb(60, 60, 60);
+    width: fit-content;
+    max-width: 75%;
+
+    box-shadow: 0 0 16px 2px rgba(0, 0, 0, 0.25);
+    
+    padding: 2px 8px 2px 8px;
+    font-size: 18px;
+
+    margin-left: 2em;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+
+    transition: filter 0.25s ease;
+}
+
+.Chat > .Messages > div[client] {
+    align-self: flex-end;
+    margin-right: 1em;
+    padding: 2px 8px 2px 8px;
+}
+
+.Chat > .Messages > div[client] > img {
+    display: none;
+}
+
+.Chat > .Messages > div[client] > span:first-child {
+    display: none;
+}
+
+.Chat > .Messages > div > span:first-child {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--Color);
+    filter: brightness(1.5);
+}
+
+.Chat > .Messages > div > span:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.Chat > .Messages > div > span:nth-child(2) > .Attachment {
+    margin: 8px;
+    height: 2em;
+}
+
+.Chat > .Messages > div > span:nth-child(3) {
+    color: rgb(180, 180, 180);
+    font-size: 14px;
+    font-weight: 600;
+
+    background-color: rgb(60, 60, 60);
+}
+
+.Chat > .Messages > div[client] > span:nth-child(3) {
+    align-self: flex-end;
+}
+
+.Chat > .Messages > div > img {
+    position: absolute;
+    top: 50%;
+    left: -36px;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 24px;
+
+    box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.25);
+
+    background-color: rgb(70, 70, 70);
+    padding: 4px;
+    border-radius: 100%;
+}
+
+.Chat > .Messages > div > .Reply {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: -72px;
+    width: max-content;
+
+    box-sizing: border-box;
+    border: 1px solid rgb(180, 180, 180);
+
+    box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.25);
+    background-color: rgb(60, 60, 60);
+    border-radius: 8px;
+
+    padding: 2px 1em 2px 8px;
+}
+
+.Chat > .Messages > div[client] > .Reply {
+    right: 0px;
+    left: unset;
+}
+
+.Chat > .Messages > div > .Reply > span:nth-child(1) {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.Chat > .Messages > div > .Reply > span:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.Chat > .Messages > div > .Reply > span:nth-child(3) {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.5;
+    float: right;
+}
+
+.Chat > .Messages > div > .Reactions {
+    position: absolute;
+    bottom: -22px;
+    right: -22px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+
+    z-index: 8;
+}
+
+.Chat > .Messages > div[client] > .Reactions {
+    left: -22px;
+}
+
+.Chat > .Messages > div:has(.Reply) {
+    margin-top: 72px;
+}
+
+.Chat > .Messages > div > .Reactions > img {
+    height: 18px;
+    width: 18px;
+    padding: 4px;
+
+    box-shadow: 0 0 16px 4px rgba(0, 0, 0, 0.25);
+    background-color: rgb(70, 70, 70);
+    border-radius: 8px;
+}
+
+.Chat > .Messages > div:has(.Reactions > img) {
+    margin-bottom: calc(18px + 4px);
+}
+
+.Chat > .Input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    position: absolute;
+    left: -8px;
+    bottom: 0;
+
+    width: 100%;
+    height: 3em;
+
+    padding-left: 8px;
+}
+
+.Chat > .Input > .Reply {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: fit-content;
+
+    margin: 8px;
+    padding: 8px;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    pointer-events: none;
+
+    transition: bottom 0.25s ease;
+}
+
+.Chat > .Input > .Reply > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    background-color: color-mix(in srgb, rgba(255, 255, 255, 0.125), rgba(255, 255, 255, 0.25));
+    height: fit-content;
+
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.Chat > .Input > .Reply > div > span:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.Chat > .Input > div {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+
+    position: absolute;
+    right: 8px;
+    height: 100%;
+    width: fit-content;
+
+    z-index: 4;
+}
+
+.Chat > .Input > div > img {
+    height: 24px;
+    margin-top: 6px;
+
+    background-color: rgba(255, 255, 255, 0.125);
+    border-radius: 8px;
+    padding: 6px;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.Chat > .Input > div > img:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.Chat > .Input > input {
+    height: 100%;
+    width: 100%;
+    resize: none;
+
+    z-index: 4;
+
+    color: rgb(255, 255, 255);
+    align-content: center;
+
+    padding-left: 8px;
+    outline: none;
+
+    background-color: rgba(255, 255, 255, 0.0625);
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.Chat > .Input > input:focus {
+    border-color: rgba(255, 255, 255, 1);
+}
+
+@media screen and (max-width: 768px) {
+    .Chat > .Input {
+        height: 4em;
+    }
+
+    .Chats > .Search {
+        height: 2em;
+        width: calc(100% - 2em - 12px);
+        margin-bottom: 8px;
+    }
+
+    .Chats > .Search > input {
+        font-size: 18px;
+    }
+
+    .Chats > .Chatlist > div > div > span {
+        font-size: 18px;
+        text-wrap: nowrap;
+    }
+
+    .Chat > .Input > .SendButton {
+        height: 2em;
+        padding: 24px;
+    }
+
+    .Chats > .Sort > div:first-child {
+        width: 100%;
+    }
+
+    .Chats > .Sort > div:last-child {
+        display: none;
+    }
+
+    .Chat > .Input > div > img {
+        height: calc(32px + 6px);
+        width: 24px;
+    }
+}
