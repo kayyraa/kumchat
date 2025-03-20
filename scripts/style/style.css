@@ -567,6 +567,7 @@
     padding: 2px 8px;
     min-width: calc(100% - 16px);
     max-width: max-content;
+    width: max-content;
 
     z-index: -1;
     border-radius: 6px;
